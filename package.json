@@ -7,7 +7,7 @@
     "test": "mocha --harmony --check-leaks -R spec -t 5000 -r should test/*.test.js",
     "test-cov": "node --harmony node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- --check-leaks -t 5000 -r should test/*.test.js",
     "test-travis": "node --harmony node_modules/.bin/istanbul cover node_modules/.bin/_mocha --report lcovonly -- --check-leaks -t 5000 -r should test/*.test.js",
-    "jshint": "jshint .",
+    "lint": "./node_modules/.bin/eslint index.js test example; exit 0;",
     "autod": "autod -w --prefix '^'"
   },
   "repository": {
@@ -27,6 +27,11 @@
   "homepage": "https://github.com/koajs/koa-markdown",
   "devDependencies": {
     "autod": "^2.4.2",
+    "eslint": "^3.19.0",
+    "eslint-config-koa": "^2.0.2",
+    "eslint-config-standard": "^7.1.0",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^2.3.1",
     "istanbul-harmony": "~0.3.1",
     "koa": "^2.5.2",
     "mocha": "~2.0.1",
