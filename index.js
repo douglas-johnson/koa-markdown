@@ -1,13 +1,13 @@
 'use strict';
 
-var assert = require('assert');
-var path = require('path');
-var fs = require('mz/fs')
+const assert = require('assert');
+const path = require('path');
+const fs = require('mz/fs');
 
-var cachePages = {};
-var cacheLayout;
+let cachePages = {};
+let cacheLayout;
 
-var defaultOpts = {
+const defaultOpts = {
   cache: false,
   titleHolder: '{TITLE}',
   bodyHolder: '{BODY}',
@@ -15,9 +15,9 @@ var defaultOpts = {
   baseUrl: '/'
 };
 
-module.exports = function (options) {
+module.exports = function(options) {
   assert(options && options.root, 'options.root required');
-  options = Object.assign( {}, defaultOpts, options );
+  options = Object.assign({}, defaultOpts, options);
   options.baseUrl = options.baseUrl.replace(/\/$/, '') + '/';
   options.layout = options.layout || path.join(options.root, 'layout.html');
   // support custom markdown render
@@ -27,8 +27,8 @@ module.exports = function (options) {
         'please pass `options.mdOptions` instead');
     }
 
-    var md = require('markdown-it')(options.mdOptions);
-    options.render = function (content) {
+    const md = require('markdown-it')(options.mdOptions);
+    options.render = function(content) {
       return md.render(content);
     };
   }
@@ -37,16 +37,15 @@ module.exports = function (options) {
     if (ctx.request.method !== 'GET') {
       return await next();
     }
-    var pathname = ctx.request.path;
+    let pathname = ctx.request.path;
     // get md file path
 
     // index file
-    if (pathname + '/' === options.baseUrl
-      || pathname === options.baseUrl) {
+    if (pathname + '/' === options.baseUrl || pathname === options.baseUrl) {
       pathname = options.baseUrl + options.indexName;
     }
     // folder index file
-    if (pathname.lastIndexOf('/') === (pathname.length - 1) ) {
+    if (pathname.lastIndexOf('/') === (pathname.length - 1)) {
       pathname = pathname + options.indexName;
     };
 
@@ -58,7 +57,7 @@ module.exports = function (options) {
     pathname = path.join(options.root, pathname + '.md');
 
     // generate html
-    var html = await getPage(pathname);
+    const html = await getPage(pathname);
     if (html === null) {
       return await next();
     }
@@ -70,9 +69,9 @@ module.exports = function (options) {
     if (options.cache && filepath in cachePages) {
       return cachePages[filepath];
     }
-    var r;
+    let r;
     try {
-      r = [ await getLayout(), await getContent(filepath)];
+      r = [ await getLayout(), await getContent(filepath) ];
     } catch (err) {
       if (err.code === 'ENOENT') {
         return null;
@@ -80,8 +79,8 @@ module.exports = function (options) {
       throw err;
     }
 
-    var layout = r[0];
-    var content = r[1];
+    let layout = r[0];
+    let content = r[1];
 
     /**
      * Using .replace() will break down with a few specific strings.
@@ -92,11 +91,11 @@ module.exports = function (options) {
      */
 
     // Mutating title and body
-    content.title = content.title.replace( /\${1}/g, '$$$' );
-    content.body = content.body.replace( /\${1}/g, '$$$' );
+    content.title = content.title.replace(/\${1}/g, '$$$');
+    content.body = content.body.replace(/\${1}/g, '$$$');
 
-    var htmlWithTitle = layout.replace( options.titleHolder, content.title );
-    var htmlWithContent = htmlWithTitle.replace( options.bodyHolder, content.body );
+    const htmlWithTitle = layout.replace(options.titleHolder, content.title);
+    const htmlWithContent = htmlWithTitle.replace(options.bodyHolder, content.body);
 
     if (options.cache) {
       cachePages[filepath] = htmlWithContent;
@@ -110,13 +109,9 @@ module.exports = function (options) {
     let layout;
 
     try {
-
-      layout = await fs.readFile( options.layout, 'utf-8' );
-
-    } catch( err ) {
-
+      layout = await fs.readFile(options.layout, 'utf-8');
+    } catch (err) {
       throw err;
-
     }
 
     if (options.cache) cacheLayout = layout;
@@ -124,21 +119,16 @@ module.exports = function (options) {
   }
 
   async function getContent(filepath) {
-
     let content;
 
-    try{
-
-      content = await fs.readFile( filepath, 'utf-8' );
-
-    } catch( err ) {
-
+    try {
+      content = await fs.readFile(filepath, 'utf-8');
+    } catch (err) {
       throw err;
-
     }
 
-    var title = content.slice(0, content.indexOf('\n')).trim().replace(/^[#\s]+/, '');
-    var body = options.render(content);
+    let title = content.slice(0, content.indexOf('\n')).trim().replace(/^[#\s]+/, '');
+    let body = options.render(content);
     return {
       title: title,
       body: body
