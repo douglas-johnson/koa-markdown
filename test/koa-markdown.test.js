@@ -4,73 +4,70 @@
  * MIT Licensed
  */
 
-"use strict";
+'use strict';
+/* eslint-env mocha */
 
 /**
  * Module dependencies.
  */
 
-var should = require('should');
-var path = require('path');
-var Koa = require('koa');
-var app = require('../example/app');
-var request = require('supertest');
-var markdown = require('..');
+const should = require('should');
+const path = require('path');
+const Koa = require('koa');
+const app = require('../example/app');
+const request = require('supertest');
+const markdown = require('..');
 
-describe('test/koa-markdown.test.js', function () {
-  it('should error with out options', function () {
-    (function() {
+describe('test/koa-markdown.test.js', () => {
+  it('should error with out options', () => {
+    (() => {
       markdown();
     }).should.throw('options.root required');
-    (function() {
+    (() => {
       markdown({baseUrl: '/docs'});
     }).should.throw('options.root required');
   });
 
-  it('should render with $& content', function (done) {
+  it('should render with $& content', done => {
     request(app)
     .get('/docs/replace')
     .expect(/\$&amp;test/)
     .expect(200, done);
   });
 
-  it( 'should render $ alone', function ( done ) {
-
-    request( app )
-      .get( '/docs/replace-alone' )
-      .expect( /\${1}/g )
-      .expect( res => {
-
+  it('should render $ alone', done => {
+    request(app)
+      .get('/docs/replace-alone')
+      .expect(/\${1}/g)
+      .expect(res => {
         const testRegEx = /\${2}/g;
 
-        if ( true === testRegEx.test( res.text ) ) {
-          throw new Error( 'Found double dollar signs $$' )
+        if (true === testRegEx.test(res.text)) {
+          throw new Error('Found double dollar signs $$');
         }
-
       })
-      .expect( 200, done );
-
+      .expect(200, done);
   });
 
-  it('should request path not match 404', function (done) {
+  it('should request path not match 404', done => {
     request(app)
     .get('/docsabc')
     .expect(404, done);
   });
 
-  it('should request method not match 404', function (done) {
+  it('should request method not match 404', done => {
     request(app)
     .post('/docs')
     .expect(404, done);
   });
 
-  it('should request not exist file 404', function (done) {
+  it('should request not exist file 404', done => {
     request(app)
     .get('/docs/not_exist')
     .expect(404, done);
   });
 
-  it('should request /docs as index ok', function (done) {
+  it('should request /docs as index ok', done => {
     request(app)
     .get('/docs')
     .expect('Content-Type', 'text/html; charset=utf-8')
@@ -78,7 +75,7 @@ describe('test/koa-markdown.test.js', function () {
     .expect(200, done);
   });
 
-  it('should request /docs/ as index ok', function (done) {
+  it('should request /docs/ as index ok', done => {
     request(app)
     .get('/docs/')
     .expect('Content-Type', 'text/html; charset=utf-8')
@@ -86,35 +83,35 @@ describe('test/koa-markdown.test.js', function () {
     .expect(200, done);
   });
 
-  it('should request /docs/index ok', function (done) {
+  it('should request /docs/index ok', done => {
     request(app)
     .get('/docs/index')
     .expect('Content-Type', 'text/html; charset=utf-8')
     .expect(200, done);
   });
 
-  it('should request folder /docs/f/ ok', function (done) {
+  it('should request folder /docs/f/ ok', done => {
     request(app)
     .get('/docs/f/')
     .expect('Content-Type', 'text/html; charset=utf-8')
     .expect(200, done);
   });
 
-  it('should request /docs/index/ 404', function (done) {
+  it('should request /docs/index/ 404', done => {
     request(app)
     .get('/docs/index/')
     .expect(404, done);
   });
 
-  describe('custom options.render', function () {
-    it('should work', function (done) {
-      var app = new Koa();
-      var docs = path.join(__dirname, '..', 'example', 'docs');
+  describe('custom options.render', () => {
+    it('should work', done => {
+      const app = new Koa();
+      const docs = path.join(__dirname, '..', 'example', 'docs');
       app.use(markdown({
         baseUrl: '/docs',
         root: docs,
         cache: true,
-        render: function (content) {
+        render: content => {
           return 'hack content, length ' + content.length;
         }
       }));
@@ -122,7 +119,7 @@ describe('test/koa-markdown.test.js', function () {
       request(app.listen())
       .get('/docs')
       .expect(200)
-      .expect(/hack content, length 352/, function (err) {
+      .expect(/hack content, length 352/, err => {
         should.not.exist(err);
 
         // should get from cache
