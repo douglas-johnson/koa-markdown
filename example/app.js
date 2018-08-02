@@ -1,16 +1,17 @@
-var Koa = require('koa');
-var markdown = require('..');
-var app = new Koa();
+const Koa = require('koa');
+const markdown = require('..');
+const app = new Koa();
+const path = require('path');
 
 app.use(markdown({
   baseUrl: '/docs',
-  root: __dirname + '/docs',
-  layout: __dirname + '/docs/layout.html',
+  root: path.join(__dirname, '/docs'),
+  layout: path.join(__dirname, '/docs/layout.html'),
   cache: false,
   indexName: 'readme'
 }));
 
-app.use(function ( ctx, next ) {
+app.use((ctx, next) => {
   ctx.status = 404;
   ctx.body = 'page not found';
 });
