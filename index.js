@@ -118,6 +118,16 @@ module.exports = function(options) {
     return layout;
   }
 
+  /**
+   * Get Content
+   *
+   * @async
+   * @param {string} filepath - path to markdown file
+   * @throws {Error} If readFile cannot find filepath
+   * @returns {Object} content
+   * @returns {string} content.title
+   * @returns {string} content.body
+   */
   async function getContent(filepath) {
     let content;
 
