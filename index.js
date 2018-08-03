@@ -34,6 +34,11 @@ const defaultOpts = {
   baseUrl: '/'
 };
 
+/**
+ * Module Main Function
+ * @param  {Object} options
+ * @return {Function} markdown - async function for use in Koa
+ */
 module.exports = function(options) {
   assert(options && options.root, 'options.root required');
   options = Object.assign({}, defaultOpts, options);
