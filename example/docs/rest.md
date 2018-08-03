@@ -2,14 +2,15 @@ rest markdown
 -------------------------
 
 ```js
-var koa = require('koa');
-var markdown = require('..');
-var app = koa();
+const Koa = require('koa');
+const markdown = require('..');
+const app = new Koa();
+const path = require('path');
 
 app.use(markdown({
   baseUrl: '/docs',
-  root: __dirname + '/docs',
-  layout: __dirname + '/docs/layout.html',
+  root: path.join(__dirname, '/docs'),
+  layout: path.join(__dirname, '/docs/layout.html'),
   cache: true,
   indexName: 'readme'
 }));
