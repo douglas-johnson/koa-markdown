@@ -11,7 +11,7 @@ Powered by [remarkable](https://github.com/jonschlinkert/remarkable).
 ## Usage
 
 ```js
-const koa = require('koa');
+const Koa = require('koa');
 const markdown = require('koa-markdown');
 const path = require('path');
 
