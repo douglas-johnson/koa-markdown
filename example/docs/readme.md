@@ -8,12 +8,13 @@ Auto convert markdown to html for koa. Inspired by [connect-markdown](https://gi
 ## Usage
 
 ```js
-var koa = require('koa');
-var markdown = require('koa-markdown');
+const Koa = require('koa');
+const markdown = require('koa-markdown');
+const path = require('path');
 
-var app = koa();
+const app = new Koa();
 app.use(markdown({
-  root: __dirname + '/docs',
+  root: path.join(__dirname, '/docs'),
   baseUrl: '/docs'
 }));
 
