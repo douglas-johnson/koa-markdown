@@ -1,7 +1,26 @@
+/**
+ * Koa Markdown
+ * @module koa-markdown
+ */
+
 'use strict';
 
+/**
+ * @const assert
+ * @type {Function}
+ */
 const assert = require('assert');
+
+/**
+ * @const path
+ * @type {Function}
+ */
 const path = require('path');
+
+/**
+ * @const fs
+ * @type {Object}
+ */
 const fs = require('mz/fs');
 
 let cachePages = {};
@@ -15,6 +34,11 @@ const defaultOpts = {
   baseUrl: '/'
 };
 
+/**
+ * Module Main Function
+ * @param  {Object} options
+ * @return {Function} markdown - async function for use in Koa
+ */
 module.exports = function(options) {
   assert(options && options.root, 'options.root required');
   options = Object.assign({}, defaultOpts, options);
@@ -33,6 +57,13 @@ module.exports = function(options) {
     };
   }
 
+  /**
+   * @function Markdown
+   * @async
+   * @description Main function performed by this middleware
+   * @param  {Object}   ctx - Koa context
+   * @param  {Function} next - return await next() to proceed with other middleware
+   */
   return async function markdown(ctx, next) {
     if (ctx.request.method !== 'GET') {
       return await next();
@@ -65,6 +96,12 @@ module.exports = function(options) {
     ctx.body = html;
   };
 
+  /**
+   * @function Get Page
+   * @description Based on filepath, get and render markdown file to HTML
+   * @param  {string} filepath - location of markdown file
+   * @return {string} htmlWithContent - rendered HTML file with markdown content
+   */
   async function getPage(filepath) {
     if (options.cache && filepath in cachePages) {
       return cachePages[filepath];
@@ -87,7 +124,7 @@ module.exports = function(options) {
      * Example: $& which will insert "the matched substring."
      * Since "{TITLE}" is the matched substring, our test case "$&test" returns "{TITLE}test"
      * Replacing $ with $$ prevents this.
-     * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_string_as_a_parameter
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_string_as_a_parameter}
      */
 
     // Mutating title and body
@@ -103,6 +140,12 @@ module.exports = function(options) {
     return htmlWithContent;
   }
 
+  /**
+   * @function Get Layout
+   * @async
+   * @throws {Error} If readFile cannot find options.layout
+   * @returns {string} layout - HTML file as string
+   */
   async function getLayout() {
     if (options.cache && cacheLayout) return cacheLayout;
 
@@ -118,6 +161,15 @@ module.exports = function(options) {
     return layout;
   }
 
+  /**
+   * @function Get Content
+   * @async
+   * @param {string} filepath - path to markdown file
+   * @throws {Error} If readFile cannot find filepath
+   * @returns {Object} content
+   * @returns {string} content.title
+   * @returns {string} content.body
+   */
   async function getContent(filepath) {
     let content;
 
